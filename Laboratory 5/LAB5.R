@@ -1,17 +1,15 @@
 library(readxl)
 
-movies<-read_excel('C:/Users/User/Documents/Rstudio Files/Random/3KReviews.xlsx')
+movies<-read_excel('/cloud/project/Laboratory 5/3KReviews.xlsx')
 
 write.csv(movies, file = "3KReviewsCsv.csv")
 
-read.csv('C:/Users/User/Documents/Rstudio Files/3KReviewsCsv.csv')
-
 library(dplyr)
-
 #checking NULL values
 View(movies)
 str(movies)
 
+#CONVERTING INTO TIBBLE
 movies<-as_tibble(movies)
 movies
 
@@ -41,12 +39,18 @@ as.POSIXct.Date(movies$Date,format="%d-%m-%Y")
 
 View(movies)
 
-#CONVERTING THE DATE and its AVERAGE
+#CONVERTING THE RATING and its AVERAGE
 movies$User_Rating<-as.numeric(gsub("/.*", "", movies$User_Rating))
 
-movies$User_Rating<-ifelse(is.na(movies$User_Rating), mean(movies$User_Rating, na.rm=TRUE)
+movies$User_Rating<-ifelse(is.na(movies$User_Rating), mean(movies$User_Rating, na.rm=TRUE), 
+                           movies$User_Rating)
                            
 View(movies)
+
+#REMOVING EMOTICONS 
+movies$Content_Review <- gsub("[:;][-']?[)D(|/d]|^_^|-_-|💙 ", "EMOJI", movies$Content_Review)
+
+movies$Reviews <- gsub("[:;][-']?[)D(|/d]|^_^|-_-", "EMOJI", movies$Reviews)
 
 #Creating a dataframe
 cleaned_movies <- data.frame(
